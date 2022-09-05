@@ -3,31 +3,33 @@
 #include<cmath>
 using namespace std;
 
-vector<int> seq;
-vector<int> ans;
-int mmax = 0;
+vector<int> seq, ans, items;
+int N, K, P;
+int maxVal = -1;
 
-void DFS(int sum, int num, int power) {
-    int item = (int)pow(num, power);
-    if (sum == item) {
-        int total = 0;
-        for (int i = 0; i < seq.size(); i++) {
-            total += seq[i];
-        }
-        if (total > mmax) {
-            mmax = total;
+void init() {
+    int item = 0;
+    int it = 0;
+    items.clear();
+    while (item <= N) {
+        items.emplace_back(item);
+        it++;
+        item = pow(it, P);
+    }
+}
+
+void DFS(int sum, int subSum, int index, int num) {
+    if (N == sum && K == num) {
+        if (maxVal < subSum) {
+            maxVal = subSum;
             ans = seq;
         }
         return;
-    }
-    if (item < sum) {
-        seq.emplace_back(num);
-        int kk = (int)pow(sum-item, 1.0/power);
-        while (kk--) {
-            DFS(sum-item, kk, power);
-        }
-        seq.pop_back();
-    }
+    } else if (N < sum || K < num || index < 1) return;
+    seq.emplace_back(index);
+    DFS(sum+items[index], subSum+index, index, num+1);
+    seq.pop_back();
+    DFS(sum, subSum, index-1, num);
 }
 
 int main(){
@@ -35,14 +37,11 @@ int main(){
     freopen("in.in","r",stdin);
     freopen("out.out","w",stdout);
 
-    int N, K, P;
     while (cin >> N >> K >> P) {
-        mmax = 0;
-        int kk = (int)pow(N, 1.0/P);
-        while (kk--) {
-            DFS(N, kk, P);
-        }
-        if (ans.size()) {
+        maxVal = -1;
+        init();
+        DFS(0, 0, items.size()-1, 0);
+        if (maxVal != -1) {
             cout << N << " = ";
             for (int i = 0; i < K; i++) {
                 if (i == 0) {
