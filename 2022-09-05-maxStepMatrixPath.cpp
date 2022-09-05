@@ -1,4 +1,5 @@
 #include<iostream>
+#include<vector>
 using namespace std;
 
 int matrix[10][10];
@@ -11,19 +12,26 @@ int direct[4][2] = {
 };
 int n, m;
 int ans;
+vector<pair<int, int>> path;
+vector<pair<int, int>> seq;
 
-void DFS(int x, int y) {
+void DFS(int x, int y, int sum) {
     if (n == x && m == y) {
-        ans++;
+        if (ans < sum) {
+            ans = sum;
+            path = seq;
+        }
         return;
     }
     for (int i = 0; i < 4; i++) {
         int nx = x + direct[i][0];
         int ny = y + direct[i][1];
-        if (1 <= nx && nx <= n && 1 <= ny && ny <= m && !visit[nx][ny] && !matrix[nx][ny]) {
+        if (1 <= nx && nx <= n && 1 <= ny && ny <= m && !visit[nx][ny]) {
             visit[nx][ny] = true;
-            DFS(nx, ny);
+            seq.emplace_back(make_pair(nx, ny));
+            DFS(nx, ny, sum+matrix[nx][ny]);
             visit[nx][ny] = false;
+            seq.pop_back();
         }
     }
 }
@@ -34,7 +42,7 @@ int main(){
     freopen("out.out","w",stdout);
 
     while (cin >> n >> m) {
-        ans = 0;
+        ans = INT32_MIN;
         for (int i = 1; i <= n; i++) {
             for (int j = 1; j <= m; j++) {
                 cin >> matrix[i][j];
@@ -42,8 +50,11 @@ int main(){
             }
         }
         visit[1][1] = true;
-        DFS(1, 1);
-        cout << ans << endl;
+        seq.emplace_back(make_pair(1, 1));
+        DFS(1, 1, matrix[1][1]);
+        for (int i = 0; i < path.size(); i++) {
+            cout << path[i].first << " " << path[i].second << endl;
+        }
     }
 
 }

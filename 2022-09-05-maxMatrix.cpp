@@ -12,17 +12,17 @@ int direct[4][2] = {
 int n, m;
 int ans;
 
-void DFS(int x, int y) {
+void DFS(int x, int y, int sum) {
     if (n == x && m == y) {
-        ans++;
+        ans = max(ans, sum);
         return;
     }
     for (int i = 0; i < 4; i++) {
         int nx = x + direct[i][0];
         int ny = y + direct[i][1];
-        if (1 <= nx && nx <= n && 1 <= ny && ny <= m && !visit[nx][ny] && !matrix[nx][ny]) {
+        if (1 <= nx && nx <= n && 1 <= ny && ny <= m && !visit[nx][ny]) {
             visit[nx][ny] = true;
-            DFS(nx, ny);
+            DFS(nx, ny, sum+matrix[nx][ny]);
             visit[nx][ny] = false;
         }
     }
@@ -34,7 +34,7 @@ int main(){
     freopen("out.out","w",stdout);
 
     while (cin >> n >> m) {
-        ans = 0;
+        ans = INT32_MIN;    // !! max can be negative
         for (int i = 1; i <= n; i++) {
             for (int j = 1; j <= m; j++) {
                 cin >> matrix[i][j];
@@ -42,7 +42,7 @@ int main(){
             }
         }
         visit[1][1] = true;
-        DFS(1, 1);
+        DFS(1, 1, matrix[1][1]);
         cout << ans << endl;
     }
 
