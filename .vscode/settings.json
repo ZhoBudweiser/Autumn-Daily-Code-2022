@@ -30,6 +30,10 @@
   ],
   "files.associations": {
     "*.tcc": "cpp",
-    "iostream": "cpp"
+    "iostream": "cpp",
+    "mutex": "cpp",
+    "streambuf": "cpp",
+    "functional": "cpp",
+    "regex": "cpp"
   }
 }

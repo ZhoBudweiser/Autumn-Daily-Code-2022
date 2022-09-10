@@ -11,27 +11,43 @@ typedef struct Node {
 
 vector<int> in, layer;
 
-BiTree create(int inL, int inR, int postL, int postR) {
-    if (inL > inR) {
+BiTree create(int l, int r, vector<int> lay) {
+    int n = lay.size();
+    if (n == 0) {
         return nullptr;
     }
-    int root = layer[postR];
-    int pos = -1;
-    for (int i = inL; i <= inR; i++) {
-        if (root == in[i]) {
-            pos = i;
-            break;
+
+    int root = lay[0];
+    int pos = l;
+    while (in[pos] != root) {
+        pos++;
+    }
+
+    BiTree t = new Node;
+    t->val = root;
+    vector<int> left, right;
+    
+    for (int i = 0; i < n; i++) {
+        for (int j = l; j < pos; j++) {
+            if (lay[i] == in[j]) {
+                left.emplace_back(lay[i]);
+            }
+        }
+        for (int j = pos+1; j <= r; j++) {
+            if (lay[i] == in[j]) {
+                right.emplace_back(lay[i]);
+            }
         }
     }
-    // cout << root << " " << pos << " ";
-    BiTree n = new Node;
-    n->val = root;
-    n->lChild = create(inL, pos-1, postL, postL+pos-inL-1);
-    n->rChild = create(pos+1, inR, postL+pos-inL, postR-1);
-    return n; 
+
+    t->lChild = create(l, pos-1, left);
+    t->rChild = create(pos+1, r, right);
+
+    return t;
+
 }
 
-void layer(BiTree T) {
+void layerTre(BiTree T) {
     queue<Node *> q;
     q.push(T);
     bool isFirst = true;
@@ -68,8 +84,8 @@ int main(){
             cin >> num;
             in.emplace_back(num);
         }
-        BiTree T = create(0, N-1, 0, N-1);
-        layer(T);
+        BiTree T = create(0, N-1, layer);
+        layerTre(T);
     }
 
     return 0;
